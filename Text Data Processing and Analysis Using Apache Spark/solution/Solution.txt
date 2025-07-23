@@ -1,0 +1,84 @@
+PART 1:
+
+
+val loadfile = sc.textFile("InputFolder/alice-1.txt")
+
+val words = loadfile.flatMap(line => line.split(" "))
+
+
+val stopWordsInput = sc.textFile("InputFolder/stopWord.txt")
+
+val wordsWithInput = loadfile.flatMap(line => line.replaceAll("[^a-zA-Z0-9\\s+]", " ").toLowerCase().split(" ").filter(!_.isEmpty))
+
+//Below is for 2nd and 3rd part
+//val wordsWithInput = loadfile.flatMap(line => line.replaceAll("[^a-zA-Z\\s+]", " ").toLowerCase().split(" ").filter(!_.isEmpty))
+
+val lowercaseInput = wordsWithInput.map(x => x.toLowerCase())
+
+val lowercaseStopWordsInput = stopWordsInput.map(x => x.toLowerCase())
+
+val tupleInput = lowercaseInput.map(x => (x,1))
+
+val tupleStopWordsInput = lowercaseStopWordsInput.map(x => (x,1))
+
+val tupleWords = tupleInput.subtractByKey(tupleStopWordsInput)
+
+val words = tupleWords.keys
+
+val wordMap = words.map(word => (word,1))
+
+val wordCount = wordMap.reduceByKey(_+_)
+
+val sorted = wordCount.sortBy(-_._2)
+val top200=sorted.take(200)
+
+System.out.println(top200.mkString("\n"))
+
+
+part2
+
+val inputfirst = words.flatMap(line => line.split(" "))
+
+val inputfirstt = inputfirst.filter(!_.isEmpty)
+
+val inputfirst1 = inputfirstt.map{
+  line => val temp = line.toLowerCase;
+  val letter = temp(0);
+  (letter,temp.length)
+}
+
+val  h = inputfirst1.groupByKey()
+
+val letters = h.map{ case(word, count) => val totalcount = count.sum; (word, totalcount); }
+
+val inputfirst2 = inputfirstt.map{
+  line => val temp = line.toLowerCase;
+  val letter = temp(0);
+  (letter,1)
+}
+
+val  g = inputfirst2.groupByKey()
+
+val occur = g.map{ case(word, count) => val totalcount = count.sum; (word, totalcount); }
+
+val twogether = letters.join(occur)
+
+val top = twogether.map{
+  case (word, (x,y)) => (word, x.toFloat / y)
+}
+
+val topaverage1 = top.sortBy(_._1)
+System.out.println(topaverage1.collect().mkString("\n"))
+
+
+
+part-3
+
+val twogether1 = letters.join(occur)
+
+val  lastlist = twogether1.map{
+  case (word, (x,y)) => (word, y, x.toFloat / y)
+}
+val sorted1 = lastlist.sortBy(-_._2)
+val top10=sorted1.take(10)
+System.out.println(top10.mkString("\n"))

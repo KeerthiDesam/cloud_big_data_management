@@ -1,0 +1,16 @@
+Description:
+-> Initially, load the text file and usling the split function,
+ split the text file into words.
+-> Then, remocing the punctuations and white spaces using the "replaceAll" function.
+-> Import the stopwords file and remove the stop words from the text file.
+MAP:
+->Each line from the input file is sent to the Mapper.
+->Punctuation and stop words are removed from the line before converting it into a list of words.
+-> using the "MAP" function converting all the words to lowercase.
+REDUCE: 
+->The word and the associated frequencies processed by the several mappers are sent into the reducer.
+->Then, by repeatedly iterating over the word's list of frequencies, the aggregate frequency of the word is determined. 
+
+Note:
+-> See commands file for commands to execute
+-> Initially execute the hadoop commands and then enter "spark-shell" and then, execute the scala commands.

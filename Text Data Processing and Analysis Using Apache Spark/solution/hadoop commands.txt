@@ -1,0 +1,14 @@
+Hadoop Commands
+***************
+
+hadoop fs -rm -r InputFolder				//remove inputfolder if exist
+hadoop fs -mkdir InputFolder				//make the inputfolder
+
+hadoop fs -copyFromLocal '/home/kdc8f/Downloads/hw2/alice-1.txt' InputFolder
+hadoop fs -copyFromLocal '/home/kdc8f/Downloads/hw2/stopWord.txt' InputFolder
+							//copy input1.txt and input2.txt to hdfs inputfolder
+hadoop fs -rm -r OutputFolder				//remove outputfolder if exist
+hadoop fs -ls OutputFolder				//see the files in outputfolder
+hadoop fs -cat OutputFolder/part-00000			//see the content of the result
+
+
