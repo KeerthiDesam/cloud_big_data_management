@@ -1,0 +1,33 @@
+Reviews = LOAD '/home/rp6kp/Downloads/amazon_reviews_us_Camera_v1_00.tsv' using PigStorage('\t') AS (marketplace: chararray,customer_id: chararray,review_id: chararray,product_id: chararray,product_parent: chararray,product_title: chararray,product_category: chararray,star_rating: int,helpful_votes: int,total_votes: int,vine: chararray,verified_purchase: chararray,review_headline: chararray,review_body: chararray,review_date: chararray);
+BagOfMrktPlcAndProdctCat = GROUP Reviews by (marketplace,product_category);
+CountReviewIdAndAvgSR = FOREACH B generate FLATTEN(group), COUNT(Reviews.review_id), AVG(Reviews.star_rating);
+DUMP CountReviewIdAndAvgSR
+
+ANS : (US,Camera,1801974,4.127015151162003), (marketplace,product_category,1,)
+----
+Task 2:
+
+groupByReviewDates = GROUP Reviews BY review_date
+totalReviewIds = FOREACH groupByReviewDates generate FLATTEN(group), COUNT(Reviews.review_id);
+STORE totalReviewIds INTO 'task_2_1' USING PigStorage();
+distinctProductIds = GROUP Reviews By product_id;
+avgHelpfulVotesAndAvgTotalVotes = FOREACH distinctProductIds generate group, AVG(Reviews.helpful_votes), AVG(Reviews.total_votes);
+STORE avgHelpfulVotesAndAvgTotalVotes INTO 'task_2_2_1' USING PigStorage();
+sortedByAvgTotalVotes = ORDER avgHelpfulVotesAndAvgTotalVotes BY $2 DESC;
+top10Results = LIMIT sortedByAvgTotalVotes 10;
+store top10Results INTO 'task_2_2_2' using PigStorage();
+---
+Task 3: 
+verifiedPurchases = FILTER Reviews by verified_purchase == 'Y';
+groupByProductCategory = GROUP verifiedPurchases BY product_category;
+totalProductIds = FOREACH groupByProductCategory generate FLATTEN(group),COUNT(verifiedPurchases.product_id);
+STORE totalProductIds INTO 'task_3_1' USING PigStorage();
+
+groupByStarRating = GROUP verifiedPurchases By star_rating;
+votesStats = FOREACH groupByStarRating generate group, SUM(verifiedPurchases.helpful_votes), SUM(verifiedPurchases.total_votes);
+totalAndAvgVotesStats = FOREACH votesStats generate $0,$1,$2,$1/(double)$2;
+sortRatingAvg = ORDER totalAndAvgVotesStats BY $0 ASC;
+store sortRatingAvg INTO 'task_3_2' USING PigStorage();
+
+sortRatingAvgByAvg = ORDER totalAndAvgVotesStats BY $3 ASC;
+store sortRatingAvgByAvg INTO 'task_3_3' USING PigStorage();

@@ -1,0 +1,20 @@
+Part 1:
+
+Download and Insert this dataset to the PIG server:
+For each ‘marketplace’ & ‘product category’ combined, find the total number of ‘review_id’ and average ‘star_rating’. Dump the result.
+ 2.1. Exclude ‘marketplace’ with the value ‘US’ from the previous query. Dump the result.
+ 
+
+Part 2:
+
+For each ‘review_date’, find the total number of ‘review_id’. Dump The Result
+For each ‘product_id’, find the average ‘helpful_votes’ and average ‘total_votes’. Dump the result.
+ 2.1. Show top 10 results of the previous query based on the  average ‘total_votes’. Dump the result.
+ 
+
+Part 3:
+
+Consider only the ‘verified purchase’ (i.e. Filter out unverified purchase) for the following queries.
+ 1.1. For each ’product category’, find the total number of  ‘product_id’. Dump the result.
+ 1.2. For each ‘star_rating’, find sum of ‘helpful_votes’, sum of ‘total_votes’, and avg_votes (i.e sum of ‘helpful_votes’ divided by sum of ‘total_votes’). Dump the result.
+     1.2.1. Apply ‘Order by avg_vote’ on the previous query. Dump the result.

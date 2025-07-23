@@ -1,0 +1,83 @@
+//enter into hive environment
+hive
+
+//create a database
+Create Database mycsdb;
+Show Databases;
+// Drop Database mycsdb;
+
+
+*****************************************************************************************Part-1****************************************************************************************************************
+
+//Drop table
+DROP TABLE IF EXISTS CameraTable;
+
+//create table
+Create Table CameraTable (marketplace string, customer_id int, review_id string, product_id string, product_parent int, product_title string, product_category string, star_rating int, helpful_votes int, total_votes int, vine string, verified_purchase string, review_headline string, review_body string, review_date date) ROW FORMAT DELIMITED FIELDS TERMINATED BY '\t' LINES TERMINATED BY '\n' STORED AS TEXTFILE;
+
+
+//load data
+Load Data Local Inpath '/home/ca7kr/Downloads/Assignment6HIVE/data' Into Table CameraTable;
+
+//Removing the first line from the loaded data in the table
+ALTER TABLE CameraTable SET TBLPROPERTIES ("skip.header.line.count"="1");
+
+// See the first 5 records of the table data
+select * from CameraTable limit 5;
+
+//For each ‘marketplace’ & ‘product category’, find the total number of ‘review_id’ & average ‘star_rating’ where  ‘marketplace’ does not include ‘US’.
+Select marketplace, product_category, count(review_id), avg(star_rating) From CameraTable Where marketplace != 'US' Group By marketplace, product_category;
+
+//Select marketplace, product_category, count(review_id), avg(star_rating) From CameraTable Group By marketplace, product_category;
+
+
+*****************************************************************************************Part-2************************************************************************************************************************
+
+//Create a table 'CameraTablePart' that supports partitioning on 'star_rating' field. Fill up data for partitions 'star_rating=4' and 'star_rating=2' from the 'CameraTable'.
+
+Create Table CameraTablePart (marketplace string, customer_id int, review_id string, product_id string, product_parent int, product_title string, product_category string, helpful_votes int, total_votes int, vine string, verified_purchase string, review_headline string, review_body string, review_date date) Partitioned By (star_rating int) ROW FORMAT DELIMITED FIELDS TERMINATED BY '\t' LINES TERMINATED BY '\n' STORED AS TEXTFILE;
+
+//Drop Table CameraTablePart;
+//Describe Extended CameraTablePart;
+
+Insert Into CameraTablePart Partition (star_rating=4) Select marketplace, customer_id, review_id, product_id, product_parent, product_title, product_category, helpful_votes, total_votes, vine, verified_purchase, review_headline, review_body, review_date From CameraTable Where star_rating=4;
+
+Insert Into CameraTablePart Partition (star_rating=2) Select marketplace, customer_id, review_id, product_id, product_parent, product_title, product_category, helpful_votes, total_votes, vine, verified_purchase, review_headline, review_body, review_date From CameraTable Where star_rating=2;
+
+//Insert Into CameraTablePart Partition (star_rating=4) Select * From CameraTable Where star_rating=4;
+
+//Insert Into CameraTablePart Partition (star_rating=2) Select * From CameraTable Where star_rating=2;
+
+//See if partition works
+//partition reduces access time
+Show Partitions CameraTablePart;
+Select Count(*) From CameraTable Where star_rating=4;
+Select Count(*) From CameraTablePart Where star_rating=4;
+
+Select Count(*) From CameraTable Where star_rating=2;
+Select Count(*) From CameraTablePart Where star_rating=2;
+
+
+//For each ‘star_rating’ from 'CameraTablePart' table, find sum of ‘helpful_votes’ and sum of ‘total_votes’ ordered by sum of 'total_votes' descending.
+Select star_rating, sum(helpful_votes), sum(total_votes) From CameraTablePart Group By star_rating Order By sum(total_votes) desc;
+
+*****************************************************************************************Part-3********************************************************************************************************************************************
+//Create a table 'CameraTableBuck' that supports bucketing on 'review_date' field. Consider 4 buckets. For each bucket, find the minimum and maximum 'review_date'.
+Create Table CameraTableBuck (marketplace string, customer_id int, review_id string, product_id string, product_parent int, product_title string, product_category string, star_rating int, helpful_votes int, total_votes int, vine string, verified_purchase string, review_headline string, review_body string, review_date date) Clustered By (review_date) Into 4 Buckets ROW FORMAT DELIMITED FIELDS TERMINATED BY '\t' LINES TERMINATED BY '\n' STORED AS TEXTFILE;
+
+//Drop Table CameraTableBuck;
+//Describe Extended CameraTableBuck;
+
+Insert Into CameraTableBuck Select marketplace, customer_id, review_id, product_id, product_parent, product_title, product_category, star_rating, helpful_votes, total_votes, vine, verified_purchase, review_headline, review_body, review_date From CameraTable;
+
+set hive.enforce.bucketing = true;
+Select min(review_date),max(review_date) FROM CameraTableBuck Tablesample(Bucket 1 out of 4 on review_date);
+Select min(review_date),max(review_date) FROM CameraTableBuck Tablesample(Bucket 2 out of 4 on review_date);
+Select min(review_date),max(review_date) FROM CameraTableBuck Tablesample(Bucket 3 out of 4 on review_date);
+Select min(review_date),max(review_date) FROM CameraTableBuck Tablesample(Bucket 4 out of 4 on review_date);
+
+
+//For each ‘product_id’, find the average ‘helpful_votes’ and average ‘total_votes’ where average 'helpful_votes' is greater than 2.
+Select product_id, avg(helpful_votes), avg(total_votes) From CameraTable Group By product_id having avg(total_votes)>2;
+Select product_id, avg(helpful_votes), avg(total_votes) From CameraTableBuck Group By product_id having avg(total_votes)>2;
+
