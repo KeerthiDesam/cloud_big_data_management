@@ -1,0 +1,21 @@
+The folder contains the following files: InsertData.java, assignmentPart3.java
+
+Below are the responsibilities of each file:
+
+Firstly convert the dataset into another file which contains 900000 lines using command prompt.
+--> head -900000 movies.txt>movies1.txt
+
+InsertData.java
+-> create the table and column family 
+-> file input stream takes the data set and converts into required format
+
+
+assignmentPart3.java
+-> in this we are using filters to calculate the average of scores(I.e 3,5,0)
+-> three filters for each score and then scan the filters to extract the result.
+-> calculate the average of score in the product family
+-> calculate the average of helpfullness in the product family
+
+
+Note:
+The second part of the assignment is in the command file where we set the version of a column family, add two additional versioned data , show the added data, find the specific substring called touching from the column family product and find the text which does not have alphanumeric values from text column.

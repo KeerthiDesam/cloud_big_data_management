@@ -1,0 +1,53 @@
+//enter into hbase environment
+hbase shell
+
+
+##### Table 'movies' #####
+
+
+//see what tables are there
+list
+
+//see table structure
+describe 'movies'
+
+//see all table data
+scan 'movies' 
+
+
+//drop the table
+disable 'movies'
+drop 'movies'
+
+
+##### Table movies ######
+Open Eclipse and run InsertData.java to insert data from Twitter.txt. After successful run it will show something like "Inserted 7375 Inserted".
+Then run the below commands at hbase environment in terminal.
+
+
+//see a limited number of data
+scan 'movies', {'LIMIT'=>5, 'REVERSED'=>true}
+
+
+Question: 2
+
+//Setting the version property to a column family
+alter 'movies', {'NAME'=>'Product', 'VERSIONS'=>3}
+
+//Putting data (adding two additional versioned data with the actual data)
+put 'movies', 'B009VB7SR2AOOLG2Q1KH96Avid Reader3/203.01169078400', 'Product:text', 'type1'
+put 'movies', 'B009VB7SR2AOOLG2Q1KH96Avid Reader3/203.01169078400', 'Product:text', 'type2'
+
+//getting data (If you want to see latest 2 Versions of that data
+get 'movies', 'B009VB7SR2AOOLG2Q1KH96Avid Reader3/203.01169078400', {'COLUMNS'=>'Product:text', 'VERSIONS'=>2}
+
+//read data with a specific substring
+scan 'movies', { 'COLUMNS' => 'Product:summary', 'FILTER' => "ValueFilter(=, 'substring:touching')"}
+
+//read data with a numeric string
+scan 'movies', { 'COLUMNS' => 'Product:text', 'FILTER' => "ValueFilter(=, 'regexstring:[^a-zA-Z0-9 ]')"}
+
+
+
+
+
