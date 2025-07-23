@@ -1,0 +1,71 @@
+Purpose: To find the words and its frequency
+Input Path: <project-directory>/input/
+Sample Output Path: <project-directory>/OutputFolder1WordCount/
+Mapper Class Name: Assignment1.WordCountMapper
+Mapper Parameters: Position in File, Text from the Input File,
+Mapper Parameter Types: Object, Text
+Mapper Output: Word, Frequency of the word
+Mapper Output Type: Text, IntWritable
+Reducer Class Name: WordCountReducer
+Reducer Parameters: Word, list of frequencies of the Word
+Reducer Output: Word, Aggregated Frequency of the Word
+Additional Methods Used: AliceAdventures.removeStopWords, AliceAdventures.wordCount
+
+
+
+Mapper Functionality:
+In the Mapper, each line from the input file is received. The line is converted into list of words after removing the puntuations and stop words. These pre-processed list of words are then converted to Hashmap of words and their respective frequencies. Then each word from the hash map of words extracted and inserted in to the mapper context which is the output of the mapper.
+
+
+
+Reducer Functionality:
+In the Reducer, word and its respective frequencies processed by the different mappers are received as the input and by iterating over the list of frequencies of the word it's aggregated frequency is calculated. Afterwards, the word and its aggregated frequency is inserted into LinkedHashMap for further processing in the cleanup method. In the cleanup method, LinkedHashMap containing the words and their aggregated frequency is sorted using the sortedMap method and finally outputs the alphabetically ordered words and their frequencies from the reducer task.
+
+
+Purpose: To find the top 200 words with most frequency
+Input Path: <project-directory>/input/
+Sample Output Path: <project-directory>/OutputFolder1Top200/
+Mapper Class Name: Assignment1.Top200Mapper
+Mapper Parameters: Position in File, Text from the Input File,
+Mapper Parameter Types: Object, Text
+Mapper Output: Word, Frequency of the word
+Mapper Output Type: Text, IntWritable
+Reducer Class Name: Top200Reducer
+Reducer Parameters: Word, list of frequencies of the Word
+Reducer Output: Word, Aggregated Frequency of the Word
+Additional Methods Used: AliceAdventures.removeStopWords, AliceAdventures.wordCount
+
+
+
+Mapper Functionality:
+In the Mapper, each line from the input file is received. The line is converted into list of words after removing the puntuations and stop words. These pre-processed list of words are then converted to Hashmap of words and their respective frequencies. Then each word from the hash map of words extracted and inserted in to the mapper context which is the output of the mapper.
+
+
+
+Reducer Functionality:
+In the Reducer, word and its respective frequencies processed by the different mappers are received as the input and by iterating over the list of frequencies of the word it's aggregated frequency is calculated. Afterwards, the word and its aggregated frequency is inserted into LinkedHashMap for further processing in the cleanup method. In the cleanup method, LinkedHashMap containing the words and their aggregated frequency is sorted using the getTop200Words method and finally outputs the alphabetically ordered words and their frequencies from the reducer task.
+
+
+
+Purpose: To find the averages of words starting with similar character.
+Input Path: <project-directory>/input/
+Sample Output Path: <project-directory>/OutputFolder1AvgWordLength/
+Mapper Class Name: Assignment1.AvgWordLengthPerCharMapper
+Mapper Parameters: Position in File, Text from the Input File,
+Mapper Parameter Types: Object, Text
+Mapper Output: Character, averages lengths of the word starting with that character
+Mapper Output Type: Text, WordStatsWritable
+Reducer Class Name: AvgWordLengthPerCharReducer
+Reducer Parameters: Character, average lengths of the word starting with that character
+Reducer Output: Character, aggregated average lengths of the word starting with that character
+Additional Methods Used: AliceAdventures.removeStopWords, AliceAdventures.wordCount, AliceAdventures.averageLengthWords
+
+
+
+Mapper Functionality:
+In the Mapper, each line from the input file is received. The line is converted into list of words after removing the puntuations and stop words. These pre-processed list of are then converted to Hashmap of characters and their respective writeStat object(which consists of the total length and total frequency). Then each character from the hash map of Characters extracted and inserted in to the mapper context which is the output of the mapper.
+
+
+
+Reducer Functionality:
+In the Reducer, Character and its respective average length are processed by the different mappers are received as the input and by iterating over the list of frequencies of the characters it's aggregated average length is calculated. Afterwards, the character and its aggregated average lengths is inserted into LinkedHashMap for further processing in the cleanup method. In the cleanup method, LinkedHashMap containing the characters and their aggregated average lengths is sorted using the sortAvgWordLengthMap method and finally outputs the alphabetically ordered Characters and their aggregated average lengths from the reducer task.
