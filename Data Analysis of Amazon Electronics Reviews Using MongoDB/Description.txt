@@ -1,0 +1,23 @@
+Description
+=========================================================
+
+First the Db is created and came out of the mongo shell and the data is imported into the DB using the command mongoimport
+
+using OR in the mongo db overall with 1 or 3 or 5 is found and the summary is printed along with overall
+
+using all Overall is printed using AND which are less than 4 and greater then 4 and reviwerName in sorted order
+
+reviwertext that contains 'awesome" is found and reviwerID
+
+found regex that contains apart from alphanumeric and spaces
+
+Overall not in 2 and 4 is found along with summary
+
+reviwerid, reviwername and asin is printed and sorted on reviwerid with limit of 10
+
+we are taking review name as id and min of overall for that reviewname is retrived
+
+we are considering helpfulness as array of two values dividing the firstvalue with the second value and considering result as key.we are finding our how many such helpfulness occurances as tot
+al count.
+
+we are reteriving the unixReviewTime greater than certain value and that is taken from dataset

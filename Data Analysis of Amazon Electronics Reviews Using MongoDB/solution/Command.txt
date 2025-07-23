@@ -1,0 +1,78 @@
+//to enter into mongodb
+mongosh
+
+//show databases
+show dbs
+
+//create a database or switch to a database
+use csdb
+
+//show databases
+show dbs
+
+************************************************************************************************Part-1******************************************************************************************************
+
+//Insert the dataset to a MongoDB collection under a database
+mongoimport --db csdb --collection Electronics --type json --file '/home/ca7kr/Documents/Assignment4MongoDB/Electronics_5.json' 
+
+//See first 4 inserted data
+db.Electronics.find().limit(4)
+db.Electronics.find().limit(4).pretty()
+
+//Use ‘OR’ operation to show only the ‘summary’ and ‘overall’ columns with overall rating 1 or 3 or 5.
+with _id
+db.Electronics.find({$or:[{'overall': 1},{'overall': 3},{'overall': 5}]}, {'summary':1, 'overall': 1})
+db.Electronics.find({$or:[{'overall': 1},{'overall': 3},{'overall': 5}]}, {'summary':1, 'overall': 1}).pretty()
+without _id:
+db.Electronics.find({$or:[{'overall': 1},{'overall': 3},{'overall': 5}]}, {'summary':1, 'overall': 1, '_id': 0})
+db.Electronics.find({$or:[{'overall': 1},{'overall': 3},{'overall': 5}]}, {'summary':1, 'overall': 1, '_id': 0}).pretty()
+
+//Use ‘AND’ operation to show only the ‘reviewerName’ and ‘overall’ columns with overall rating less than 4 (use $lt) and greater than 1 (use $gt) and sort the result by the ascending alphabetic order of ‘reviewerName’.
+includes reviewerName '':
+db.Electronics.find({$and:[{'overall':{$gt:1}},{'overall':{$lt:4}},{'reviewerName':{$exists:true}}]}, {'reviewerName':1, 'overall': 1, '_id': 0}).sort({'reviewerName':1})
+db.Electronics.find({$and:[{'overall':{$gt:1}},{'overall':{$lt:4}},{'reviewerName':{$ne:null}}]}, {'reviewerName':1, 'overall': 1, '_id': 0}).sort({'reviewerName':1})
+doesnot includes reviewerName '':
+db.Electronics.find({$and:[{'overall':{$gt:1}},{'overall':{$lt:4}},{'reviewerName':{$exists:1, "$ne":""}}]}, {'reviewerName':1, 'overall': 1, '_id': 0}).sort({'reviewerName':1})
+
+**********************************************************************************************Part-2*********************************************************************************************************
+
+//Find the 'reviewText' that have the word 'awesome'.
+without _id:
+db.Electronics.find({'reviewText':{$regex:'awesome'}},{'reviewText':1,'_id':0})
+with _id:
+db.Electronics.find({'reviewText':{$regex:'awesome'}},{'reviewText':1})
+
+//Find the 'summary' that have any characters apart form 'alphanumerical characters' and 'space'.
+without _id:
+db.Electronics.find({'summary':{$regex:'[^a-zA-Z0-9 ]'}},{'summary':1,'_id':0})
+with _id:
+db.Electronics.find({'summary':{$regex:'[^a-zA-Z0-9 ]'}},{'summary':1})
+
+//Use $nin operator to show only the ‘summary’ and ‘overall’ columns where overall rating not in 2 and 4.
+db.Electronics.find({'overall': {$nin: [2,4]}},{'summary':1,'overall':1,'_id':0})
+
+//Show only the 'reviewerID', 'asin' and 'reviewerName' column with the ascending order of 'reviewerID'. Show only first 10 result.
+db.Electronics.find({},{'reviewerID':1,'asin':1,'reviewerName':1,'_id':0}).sort({'reviewerID' : 1}).limit(10)
+
+
+*********************************************************************************************Part - 3 *********************************************************************************************************
+
+//Group by ‘reviewerName’ to show the minimum ‘overall’ rating they posted. Show only 10 results.
+db.Electronics.aggregate([{$group: {'_id':'$reviewerName','minimumOverallRating':{$min:'$overall'}}},{$limit:10}])
+
+//Group by ‘helpful’ to show the ‘total number’ of entries found for different ‘Helpful’ data, sorted by ascending order of the ‘total number’.
+db.Electronics.aggregate([ { $group: { _id: { $trunc: [ { $divide: [ { $arrayElemAt: ["$helpful", 0] }, { $max: [{ $arrayElemAt: ["$helpful", 1] }, 1] }] }, 2] }, TotalNumber: { $sum: 1 } } },{$sort:{TotalNumber:1}}])
+db.Electronics.aggregate([{$group: {'_id':'$helpful','TotalNumber':{$sum:1}}},{$sort:{'TotalNumber':1}}])
+db.Electronics.aggregate([{$unwind:'$helpful'},{$group: {'_id':'$helpful', 'TotalNumber':{$sum:1}}},{$sort:{'TotalNumber':1}}])
+
+//Find the count of data where 'unixReviewTime' greater than a certain value (try different values of 'unixReviewTime' from the dataset to see if the result changes. Submit any of the result you got for your input value of 'unixReviewTime').
+db.Electronics.find({'unixReviewTime':{$gt:1283990400}}).count()
+Count: 1429732
+
+db.Electronics.find({'unixReviewTime':{$gt:1290556800}}).count()
+Count: 1405617
+
+db.Electronics.find({'unixReviewTime':{$gt:1290643200}}).count()
+Count: 1405419
+
+**************************************************************************************************************************************************************************************************************
